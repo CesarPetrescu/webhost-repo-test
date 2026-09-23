@@ -1,0 +1,16 @@
+version: 1
+frontend:
+  path: frontend
+  buildMode: static
+backend:
+  path: backend
+  dockerfile: Dockerfile
+  port: 8080
+  healthPath: /healthz
+database:
+  postgres:
+    tier: shared
+    migrations:
+      command: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "CREATE TABLE IF NOT EXISTS canary_runs (id serial PRIMARY KEY, note text NOT NULL, created_at timestamptz NOT NULL DEFAULT now()); INSERT INTO canary_runs (note) VALUES ('migration ran');"
+routing:
+  apiPrefix: /api
